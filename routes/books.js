@@ -12,14 +12,44 @@ router.get('/search-result', function (req, res, next) {
 });
 
 router.get('/list', function(req, res, next) {
-    let sqlquery = "SELECT * FROM books"; // query database to get all the books
-    // execute sql query
+    let sqlquery = "SELECT * FROM books"; // get all books from database
     db.query(sqlquery, (err, result) => {
         if (err) {
             next(err)
+        } else {
+            res.render("list.ejs", { availableBooks: result });
         }
-        res.send(result)
-     });
+    });
+});
+
+// displays form
+router.get('/addbook', function (req, res, next) {
+    res.render('addbook.ejs');
+});
+
+router.post('/bookadded', function (req, res, next) {
+    // saves data in database
+    let sqlquery = "INSERT INTO books (name, price) VALUES (?, ?)";
+    let newrecord = [req.body.name, req.body.price];
+
+    db.query(sqlquery, newrecord, (err, result) => {
+        if (err) {
+            next(err);
+        } else {
+            res.send('This book is added to database, name: ' + req.body.name + ' price ' + req.body.price);
+        }
+    });
+});
+
+router.get('/bargainbooks', function(req, res, next) {
+    let sqlquery = "SELECT * FROM books WHERE price < 20"; // get all books cheaper than £20
+    db.query(sqlquery, (err, result) => {
+        if (err) {
+            next(err);
+        } else {
+            res.render("bargainbooks.ejs", { cheapBooks: result });
+        }
+    });
 });
 
 

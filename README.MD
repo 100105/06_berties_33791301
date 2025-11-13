@@ -1,10 +1,22 @@
 # Berties Books
 
-Sample code for Dynamic Web Applications module.
+This project is labwork for Dynamic web applications module that uses node.js with Express and EJS.
+---
 
-Uses node.js with Express and EJS.
+## How to Run
+1. npm install
+2. node index.js
+---
 
-To install and run:
+### Technologies Used
+- Node.js
+- Express
+- EJS
+- JavaScript
+- HTML & CSS
+- MySQL
 
-npm install
-node index.js
+---
+
+#### Author
+Sara Shah

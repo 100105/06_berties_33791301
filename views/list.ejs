@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Bertie’s Bookshop</title>
+  <style>
+    body {
+      font-family: "Poppins", Arial, sans-serif;
+      background-color: #f9f5f2; /* soft beige background */
+      margin: 0;
+      padding: 0;
+      color: #4a3f35; /* warm brown text */
+    }
+
+    header {
+      background-color: #d9b8a3; /* muted clay pink */
+      color: white;
+      padding: 25px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+    }
+
+    h2 {
+      color: #a07c68; /* soft mocha */
+      margin: 30px 0 10px 60px;
+      font-weight: 500;
+      font-size: 22px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 70%;
+      margin-left: 60px;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+    }
+
+    th {
+      color: #6b4f3b; /* earthy brown */
+      font-size: 18px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Bertie’s Bookshop</h1>
+  </header>
+
+  <h2>Available Books</h2>
+
+  <table>
+    <tr>
+      <th>Book Name</th>
+      <th>Price (£)</th>
+    </tr>
+    <% availableBooks.forEach(function(book) { %>
+      <tr>
+        <td><%= book.name %></td>
+        <td><%= Number(book.price).toFixed(2) %></td>
+      </tr>
+    <% }); %>
+  </table>
+</body>
+</html>
