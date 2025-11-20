@@ -43,8 +43,8 @@ router.post('/registered', function (req, res, next) {
             }
         })
         
-    })  // closes bcrypt.hash
-})      // closes router.post
+    })  
+})      
 
 router.get('/list', function (req, res, next) {
 
@@ -58,5 +58,36 @@ router.get('/list', function (req, res, next) {
         }
     });
 });
-// Export the router object so index.j
+
+router.get('/login', function(req, res, next) {
+    res.render("login.ejs")
+})
+
+router.post('/loggedin', function(req, res, next) {
+
+    let username = req.body.username
+    let plainPassword = req.body.password
+    let sqlquery = "SELECT * FROM users WHERE username = ?"
+
+    db.query(sqlquery, [username], (err, result) => {
+        if (err) {
+            next(err)
+        }
+
+        if (result.length === 0) {
+            res.send("Login failed: username not found.")
+        } else {
+            let storedHash = result[0].hashedPassword
+            
+            bcrypt.compare(plainPassword, storedHash, function(err, match) {
+                if (match) {
+                    res.send("Login successful! Welcome back, " + username)
+                } else {
+                    res.send("Login failed: incorrect password.")
+                }
+            })
+        }
+    })
+})
+
 module.exports = router
