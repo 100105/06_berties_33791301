@@ -61,36 +61,37 @@ router.get('/list', function (req, res, next) {
 
 router.post('/loggedin', function(req, res, next) {
 
-    let username = req.body.username;
-    let sqlquery = "SELECT * FROM users WHERE username = ?";
+    let username = req.body.username
+    let suppliedPassword = req.body.password
+    let sqlquery = "SELECT * FROM users WHERE username = ?"
 
     db.query(sqlquery, [username], (err, result) => {
         if (err) {
-            next(err);
+            return next(err)
         }
-        else if (result.length === 0) {
-            res.send("Login failed: username not found.");
+
+        if (result.length === 0) {
+            res.send("Login failed: username not found.")
         }
         else {
+            let hashedPassword = result[0].hashedPassword
 
-            let hashedPassword = result[0].hashedPassword;
-
-            bcrypt.compare(req.body.password, hashedPassword, function(err, matchResult) {
+            bcrypt.compare(req.body.password, hashedPassword, function(err, compareResult) {
 
                 if (err) {
-                    res.send("An error occurred during login.");
+                    res.send("An error occurred during login.")
                 }
-                else if (matchResult == true) {
-                    res.send("Login successful!");
+                else if (compareResult == true) {
+                    res.send("Login successful! Welcome back, " + username)
                 }
                 else {
-                    res.send("Login failed: incorrect password.");
+                    res.send("Login failed: incorrect password.")
                 }
 
-            }); 
+            }) 
         }
-    }); 
+    })
+})
 
-});
 
 module.exports = router

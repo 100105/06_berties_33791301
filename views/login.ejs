@@ -2,11 +2,11 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Login - Bertie’s Bookshop</title>
+  <title>Login</title>
   <style>
     body {
       font-family: "Poppins", Arial, sans-serif;
-      background-color: #f9f5f2; 
+      background-color: #f9f5f2;
       margin: 0;
       padding: 0;
       color: #4a3f35;
@@ -25,16 +25,9 @@
       font-size: 30px;
     }
 
-    h2 {
-      color: #a07c68;
-      margin: 30px 0 10px 60px;
-      font-weight: 500;
-      font-size: 22px;
-    }
-
     form {
       margin-left: 60px;
-      margin-top: 20px;
+      margin-top: 30px;
     }
 
     label {
@@ -64,24 +57,18 @@
 </head>
 
 <body>
-
   <header>
     <h1>Bertie’s Bookshop</h1>
   </header>
 
-  <h2>Login</h2>
+  <form method="POST" action="/users/loggedin">
+    <label>Username:</label>
+    <input type="text" name="username" required>
 
-  <form action="/users/loggedin" method="POST">
-
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required>
-
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
+    <label>Password:</label>
+    <input type="password" name="password" required>
 
     <input type="submit" value="Login">
-
   </form>
-
 </body>
 </html>
