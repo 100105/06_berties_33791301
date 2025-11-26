@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Audit Log</title>
+  <style>
+    body {
+      font-family: "Poppins", Arial, sans-serif;
+      background-color: #f9f5f2;
+      color: #4a3f35;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #d9b8a3;
+      color: white;
+      padding: 25px;
+      text-align: center;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin-left: 60px;
+      font-size: 24px;
+      color: #a07c68;
+      font-weight: 500;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 75%;
+      margin-left: 60px;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #d9b8a3;
+    }
+
+    th {
+      color: #6b4f3b;
+      font-size: 18px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>Bertie’s Bookshop</h1>
+</header>
+
+<h1>Login Audit Log</h1>
+
+<table>
+  <tr>
+    <th>Username</th>
+    <th>Success</th>
+    <th>Time</th>
+  </tr>
+
+  <% logs.forEach(function(log) { %>
+  <tr>
+    <td><%= log.username %></td>
+    <td><%= log.success ? "Yes" : "No" %></td>
+    <td><%= log.login_time %></td>
+  </tr>
+  <% }); %>
+</table>
+
+</body>
+</html>

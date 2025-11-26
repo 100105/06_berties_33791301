@@ -2,12 +2,20 @@
 var express = require ('express')
 var ejs = require('ejs')
 var mysql = require('mysql2')
+var session = require('express-session')
 const path = require('path')
 require('dotenv').config()
 
 // Create the express application object
 const app = express()
 const port = 8000
+
+// Middleware to make login status available in all .ejs pages
+app.use((req, res, next) => {
+    res.locals.isLoggedIn = !!req.session.userId;
+    next();
+});
+
 
 // Tell Express that we want to use EJS as the templating engine
 app.set('view engine', 'ejs')
@@ -17,6 +25,26 @@ app.use(express.urlencoded({ extended: true }))
 
 // Set up public folder (for css and static js)
 app.use(express.static(path.join(__dirname, 'public')))
+
+// Create a session
+app.use(session({
+    secret: 'somerandomstuff',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        expires: 600000
+    }
+}))
+
+const redirectLogin = (req, res, next) => {
+    if (!req.session.userId ) {
+      res.redirect('./login') 
+    } else { 
+        next (); 
+    } 
+}
+
+app.locals.redirectLogin = redirectLogin
 
 // Define our application-specific data
 app.locals.shopData = {shopName: "Bertie's Books"}
@@ -40,7 +68,7 @@ app.use('/', mainRoutes)
 // Load the route handlers for /users
 const usersRoutes = require('./routes/users')
 app.use('/users', usersRoutes)
-
+ 
 // Load the route handlers for /books
 const booksRoutes = require('./routes/books')
 app.use('/books', booksRoutes)
