@@ -1,86 +1,107 @@
-body {
-  font-family: "Poppins", Arial, sans-serif;
-  background-color: #f9f5f2;
-  margin: 0;
-  padding: 0;
-  color: #4a3f35;
-}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <style>
+    body {
+      font-family: "Poppins", Arial, sans-serif;
+      background-color: #f9f5f2;
+      margin: 0;
+      padding: 0;
+      color: #4a3f35;
+    }
 
-header {
-  background-color: #d9b8a3;
-  color: white;
-  padding: 25px;
-  text-align: center;
-  letter-spacing: 1px;
-}
+    header {
+      background-color: #d9b8a3;
+      color: white;
+      padding: 25px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
 
-h1 {
-  margin: 0;
-  font-size: 30px;
-}
+    h1 {
+      margin: 0;
+      font-size: 30px;
+    }
 
-/* Form styling */
-form {
-  margin-left: 60px;
-  margin-top: 30px;
-}
+    form {
+      margin: 30px 0 0 20px; /* left aligned form, minimal indent */
+    }
 
-label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-}
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
 
-input[type="text"],
-input[type="password"],
-input[type="email"],
-input[type="number"] {
-  padding: 8px;
-  width: 300px;
-  margin-bottom: 15px;
-  border: 1px solid #caa088;
-  border-radius: 4px;
-}
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+      padding: 8px;
+      width: 320px;
+      margin-bottom: 15px;
+      border: 1px solid #caa088;
+      border-radius: 4px;
+    }
 
-input[type="submit"] {
-  background-color: #d9b8a3;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
+    input[type="submit"] {
+      background-color: #d9b8a3;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
 
-/* Table styling (users + books pages) */
-table {
-  border-collapse: collapse;
-  width: 70%;
-  margin-left: 60px;
-}
+    .error-box {
+      color: #b30000;
+      background-color: #ffebe8;
+      border: 1px solid #ffbdbd;
+      padding: 10px;
+      width: 300px;
+      margin: 10px 0 0 20px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
 
-th, td {
-  padding: 12px 15px;
-  text-align: left;
-}
+  </style>
+</head>
 
-th {
-  color: #6b4f3b;
-  font-size: 18px;
-  font-weight: 600;
-}
+<body>
+  <header>
+    <h1>Bertie’s Bookshop</h1>
+  </header>
 
-/* Navigation links */
-nav {
-  margin-top: 10px;
-}
+  <% if (errors && errors.length > 0) { %>
+    <div class="error-box">
+      <strong>Please fix the following:</strong>
+      <ul>
+        <% errors.forEach(function(error) { %>
+          <li><%= error.msg %></li>
+        <% }); %>
+      </ul>
+    </div>
+  <% } %>
 
-nav a {
-  color: white;
-  margin: 0 10px;
-  text-decoration: none;
-  font-weight: 500;
-}
+  <form method="POST" action="/users/registered">
+    <label>First Name:</label>
+    <input type="text" name="first" required>
 
-nav a:hover {
-  text-decoration: underline;
-}
+    <label>Last Name:</label>
+    <input type="text" name="last" required>
+
+    <label>Email:</label>
+    <input type="email" name="email" required>
+
+    <label>Username (5–20 chars):</label>
+    <input type="text" name="username" minlength="5" maxlength="20" required>
+
+    <label>Password (8+ chars):</label>
+    <input type="password" name="password" minlength="8" required>
+
+    <input type="submit" value="Register">
+  </form>
+
+</body>
+</html>
