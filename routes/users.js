@@ -5,7 +5,7 @@ const saltRounds = 10;
 
 const { check, validationResult } = require('express-validator');
 
-// Redirect if not logged in — matches coursework EXACTLY
+// Redirect if not logged in 
 const redirectLogin = (req, res, next) => {
     if (!req.session.userId ) {
         res.redirect('./login');
@@ -14,7 +14,7 @@ const redirectLogin = (req, res, next) => {
     }
 };
 
-// REGISTER PAGE
+// REGISTER 
 router.get('/register', function (req, res) {
     res.render("register.ejs", { 
         errors: [], 
@@ -22,7 +22,7 @@ router.get('/register', function (req, res) {
     });
 });
 
-// REGISTER — VALIDATION + HASHING
+// REGISTER 
 router.post(
     '/registered',
     [
@@ -44,6 +44,13 @@ router.post(
             });
         }
 
+        // sanitiser
+        const cleanFirst    = req.sanitize(req.body.first.trim());
+        const cleanLast     = req.sanitize(req.body.last.trim());
+        const cleanEmail    = req.sanitize(req.body.email.trim());
+        const cleanUsername = req.sanitize(req.body.username.trim());
+    
+
         bcrypt.hash(req.body.password, saltRounds, function (err, hashedPassword) {
             if (err) return next(err);
 
@@ -53,10 +60,10 @@ router.post(
             `;
 
             db.query(sqlquery, [
-                req.body.username,
-                req.body.first,
-                req.body.last,
-                req.body.email,
+                cleanUsername,
+                cleanFirst,
+                cleanLast,
+                cleanEmail,
                 hashedPassword
             ], (err) => {
                 if (err) return res.send("Registration failed: username already exists.");
@@ -84,8 +91,8 @@ router.post(
                       </style>
                     </head>
                     <body>
-                      <h2>You are now registered, ${req.body.first}!</h2>
-                      <p>We have sent an email to <strong>${req.body.email}</strong></p>
+                      <h2>You are now registered, ${cleanFirst}!</h2>
+                      <p>We have sent an email to <strong>${cleanEmail}</strong></p>
                       <a class="btn" href="../">Return to Home</a>
                     </body>
                     </html>
@@ -95,7 +102,7 @@ router.post(
     }
 );
 
-// USERS LIST
+// USERS 
 router.get('/list', redirectLogin, function (req, res, next) {
     let sqlquery = "SELECT username, first, last, email FROM users";
     db.query(sqlquery, (err, result) => {
@@ -104,14 +111,14 @@ router.get('/list', redirectLogin, function (req, res, next) {
     });
 });
 
-// LOGIN PAGE
+// LOGIN 
 router.get('/login', function (req, res) {
     res.render("login.ejs");
 });
 
-// LOGIN with Styled Success + Audit Logging
+// LOGIN , audit
 router.post('/loggedin', function (req, res, next) {
-    let username = req.body.username;
+    let username = req.sanitize(req.body.username);
     let suppliedPassword = req.body.password;
 
     db.query("SELECT * FROM users WHERE username = ?", [username], (err, result) => {
@@ -130,7 +137,6 @@ router.post('/loggedin', function (req, res, next) {
                 return res.send("Login failed: incorrect password.");
             }
 
-            // SUCCESS 
             req.session.userId = username;
             db.query("INSERT INTO login_audit (username, success) VALUES (?, ?)", [username, true]);
 
@@ -157,7 +163,7 @@ router.post('/loggedin', function (req, res, next) {
                   </style>
                 </head>
                 <body>
-                  <h2>Welcome back, ${username}! 🎉</h2>
+                  <h2>Welcome back, ${username}! </h2>
                   <a class="btn" href="../">Return to Home</a>
                   <a class="btn" href="../books/list">View Books</a>
                 </body>
@@ -167,7 +173,7 @@ router.post('/loggedin', function (req, res, next) {
     });
 });
 
-// AUDIT PAGE
+// AUDIT 
 router.get('/audit', redirectLogin, function (req, res, next) {
     db.query("SELECT * FROM login_audit ORDER BY login_time DESC", (err, result) => {
         if (err) return next(err);
