@@ -68,6 +68,9 @@
 <body>
 <header>
   <h1>Bertie’s Bookshop</h1>
+  <% if (isLoggedIn) { %>
+    <a href="/logout" class="nav-link">Logout</a>
+  <% } %>
   <p><a href="/">Return to Home</a></p>
 </header>
 
