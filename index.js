@@ -45,9 +45,6 @@ const redirectLogin = (req, res, next) => {
 
 app.locals.redirectLogin = redirectLogin
 
-// Define our application-specific data
-app.locals.shopData = {shopName: "Bertie's Books"}
-
 // Define the database connection pool
 const db = mysql.createPool({
     host: 'localhost',
@@ -59,6 +56,9 @@ const db = mysql.createPool({
     queueLimit: 0,
 });
 global.db = db;
+
+// Define our application-specific data
+app.locals.shopData = {shopName: "Bertie's Books"}
 
 // Load the route handlers
 const mainRoutes = require("./routes/main")

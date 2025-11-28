@@ -6,65 +6,42 @@ const saltRounds = 10;
 // express-validator
 const { check, validationResult } = require('express-validator');
 
-// Redirect if not logged in
+// Correct lecturer-approved redirect function
 const redirectLogin = (req, res, next) => {
-    if (!req.session || !req.session.userId) {
-        return res.redirect("./login");
-    }
-    next();
-};
+    if (!req.session.userId ) {
+      res.redirect('./login') // redirect to the login page
+    } else { 
+        next(); // move to next middleware function
+    } 
+}
 
 // REGISTER PAGE
 router.get('/register', function (req, res) {
-    res.render("register.ejs", { 
-        errors: [], 
-        data: {} 
-    });
+    res.render("register.ejs", { errors: [], data: {} });
 });
 
 // REGISTER USER — VALIDATION + HASHING
 router.post(
     '/registered',
     [
-        // first + last name required
-        check('first')
-            .trim()
-            .notEmpty()
-            .withMessage("First name is required"),
-
-        check('last')
-            .trim()
-            .notEmpty()
-            .withMessage("Last name is required"),
-
-        // email format
-        check('email')
-            .trim()
-            .isEmail()
-            .withMessage("Please enter a valid email address"),
-
-        // username length + characters
+        check('first').trim().notEmpty().withMessage("First name is required"),
+        check('last').trim().notEmpty().withMessage("Last name is required"),
+        check('email').trim().isEmail().withMessage("Please enter a valid email"),
         check('username')
             .trim()
             .isLength({ min: 5, max: 20 })
-            .withMessage("Username must be between 5 and 20 characters")
+            .withMessage("Username must be 5–20 characters long")
             .matches(/^[A-Za-z0-9_]+$/)
             .withMessage("Username can only contain letters, numbers and underscores"),
-
-        // password length (Task 3)
         check('password')
             .isLength({ min: 8 })
             .withMessage("Password must be at least 8 characters long")
     ],
     function (req, res, next) {
-        const errors = validationResult(req);
 
+        const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            // Re-render form with messages + previous values
-            return res.render("register.ejs", { 
-                errors: errors.array(),
-                data: req.body 
-            });
+            return res.render("register.ejs", { errors: errors.array(), data: req.body });
         }
 
         const plainPassword = req.body.password;
@@ -86,15 +63,10 @@ router.post(
             ];
 
             db.query(sqlquery, newrecord, (err) => {
-                if (err) {
-                    // probably duplicate username
-                    return res.send("Registration failed: username already exists.");
-                }
+                if (err) return res.send("Registration failed: username already exists.");
 
-                res.send(
-                    "Hello " + req.body.first + " " + req.body.last + ", you are now registered!<br>We will send an email to you at: " 
-                    + req.body.email
-                );
+                res.send(`You are now registered! An email has been sent to ${req.body.email}.
+                <br><a href='/'>Return to home</a>`);
             });
         });
     }
@@ -103,7 +75,6 @@ router.post(
 // USERS LIST — PROTECTED
 router.get('/list', redirectLogin, function (req, res, next) {
     let sqlquery = "SELECT username, first, last, email FROM users";
-
     db.query(sqlquery, (err, result) => {
         if (err) return next(err);
         res.render("listusers.ejs", { users: result });
@@ -125,11 +96,7 @@ router.post('/loggedin', function (req, res, next) {
         if (err) return next(err);
 
         if (result.length === 0) {
-            // Audit failed login (no such user)
-            db.query(
-                "INSERT INTO login_audit (username, success) VALUES (?, ?)",
-                [username, false]
-            );
+            db.query("INSERT INTO login_audit (username, success) VALUES (?, ?)", [username, false]);
             return res.send("Login failed: username not found.");
         }
 
@@ -139,22 +106,11 @@ router.post('/loggedin', function (req, res, next) {
             if (err) return res.send("Error during login.");
 
             if (match) {
-                // Save session
                 req.session.userId = username;
-
-                // Audit success
-                db.query(
-                    "INSERT INTO login_audit (username, success) VALUES (?, ?)",
-                    [username, true]
-                );
-
+                db.query("INSERT INTO login_audit (username, success) VALUES (?, ?)", [username, true]);
                 res.send("Login successful! Welcome back, " + username);
             } else {
-                // Audit incorrect password
-                db.query(
-                    "INSERT INTO login_audit (username, success) VALUES (?, ?)",
-                    [username, false]
-                );
+                db.query("INSERT INTO login_audit (username, success) VALUES (?, ?)", [username, false]);
                 res.send("Login failed: incorrect password.");
             }
         });
@@ -164,7 +120,6 @@ router.post('/loggedin', function (req, res, next) {
 // AUDIT PAGE — PROTECTED
 router.get('/audit', redirectLogin, function (req, res, next) {
     let sqlquery = "SELECT * FROM login_audit ORDER BY login_time DESC";
-
     db.query(sqlquery, (err, result) => {
         if (err) return next(err);
         res.render("audit.ejs", { logs: result });
