@@ -1,15 +1,18 @@
+// Create a new router
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
+// NEW FOR VALIDATION
+const { check, validationResult } = require('express-validator');
+
 // Redirect if not logged in
 const redirectLogin = (req, res, next) => {
     if (!req.session.userId) {
-        res.redirect("./users/login");
-    } else {
-        next();
+        return res.redirect("./login");
     }
+    next();
 };
 
 // REGISTER PAGE
@@ -17,34 +20,49 @@ router.get('/register', function (req, res) {
     res.render("register.ejs");
 });
 
-// REGISTER USER
-router.post('/registered', function (req, res, next) {
-    const plainPassword = req.body.password;
+// REGISTER USER — VALIDATED
+router.post('/registered',
+    [
+        check('email').isEmail().withMessage("Invalid email format"),
+        check('username').isLength({ min: 5, max: 20 }).withMessage("Username must be 5-20 characters")
+    ],
+    function (req, res, next) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.render("register.ejs", {
+                errors: errors.array(),
+                data: req.body
+            });
+        }
 
-    bcrypt.hash(plainPassword, saltRounds, function (err, hashedPassword) {
-        if (err) return next(err);
+        const plainPassword = req.body.password;
 
-        let sqlquery = `
-            INSERT INTO users (username, first, last, email, hashedPassword)
-            VALUES (?, ?, ?, ?, ?)
-        `;
+        bcrypt.hash(plainPassword, saltRounds, function (err, hashedPassword) {
+            if (err) return next(err);
 
-        let newrecord = [
-            req.body.username,
-            req.body.first,
-            req.body.last,
-            req.body.email,
-            hashedPassword
-        ];
+            let sqlquery = `
+                INSERT INTO users (username, first, last, email, hashedPassword)
+                VALUES (?, ?, ?, ?, ?)
+            `;
 
-        db.query(sqlquery, newrecord, (err) => {
-            if (err) return res.send("User already exists!");
+            let newrecord = [
+                req.body.username,
+                req.body.first,
+                req.body.last,
+                req.body.email,
+                hashedPassword
+            ];
 
-            res.send(`Hello ${req.body.first} ${req.body.last},
-                      you are now registered!`);
+            db.query(sqlquery, newrecord, (err) => {
+                if (err) {
+                    return res.send("User already exists!");
+                }
+
+                res.send(`Hello ${req.body.first} ${req.body.last},
+                        you are now registered!`);
+            });
         });
     });
-});
 
 // USERS LIST — PROTECTED
 router.get('/list', redirectLogin, function (req, res, next) {
@@ -61,20 +79,18 @@ router.get('/login', function (req, res) {
     res.render("login.ejs");
 });
 
-// LOGIN AUTHENTICATION + AUDIT
+// LOGIN + SESSION + AUDIT
 router.post('/loggedin', function (req, res, next) {
     let username = req.body.username;
     let suppliedPassword = req.body.password;
+
     let sqlquery = "SELECT * FROM users WHERE username = ?";
 
     db.query(sqlquery, [username], (err, result) => {
         if (err) return next(err);
 
         if (result.length === 0) {
-            // Audit failed login
-            db.query("INSERT INTO login_audit (username, success) VALUES (?, ?)",
-                [username, false]);
-
+            db.query("INSERT INTO login_audit (username, success) VALUES (?, ?)", [username, false]);
             return res.send("Login failed: username not found.");
         }
 
@@ -84,19 +100,11 @@ router.post('/loggedin', function (req, res, next) {
             if (err) return res.send("Error during login.");
 
             if (match) {
-                // Save session
                 req.session.userId = username;
-
-                // Audit successful login
-                db.query("INSERT INTO login_audit (username, success) VALUES (?, ?)",
-                    [username, true]);
-
+                db.query("INSERT INTO login_audit (username, success) VALUES (?, ?)", [username, true]);
                 res.send("Login successful! Welcome back, " + username);
             } else {
-                // Audit incorrect password
-                db.query("INSERT INTO login_audit (username, success) VALUES (?, ?)",
-                    [username, false]);
-
+                db.query("INSERT INTO login_audit (username, success) VALUES (?, ?)", [username, false]);
                 res.send("Login failed: incorrect password.");
             }
         });

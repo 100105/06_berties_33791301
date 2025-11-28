@@ -10,13 +10,6 @@ require('dotenv').config()
 const app = express()
 const port = 8000
 
-// Middleware to make login status available in all .ejs pages
-app.use((req, res, next) => {
-    res.locals.isLoggedIn = !!req.session.userId;
-    next();
-});
-
-
 // Tell Express that we want to use EJS as the templating engine
 app.set('view engine', 'ejs')
 
@@ -35,6 +28,12 @@ app.use(session({
         expires: 600000
     }
 }))
+
+// Middleware to make login status available in all .ejs pages
+app.use((req, res, next) => {
+    res.locals.isLoggedIn = !!req.session.userId;
+    next();
+})
 
 const redirectLogin = (req, res, next) => {
     if (!req.session.userId ) {
