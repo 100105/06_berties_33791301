@@ -1,52 +1,86 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>Register for <%= shopData.shopName %></title>
-    <link rel="stylesheet" type="text/css" href="/main.css" />
-  </head>
-  <body>
-    <h1>Register for <%= shopData.shopName %></h1>
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <style>
+    body {
+      font-family: "Poppins", Arial, sans-serif;
+      background-color: #f9f5f2;
+      margin: 0;
+      padding: 0;
+      color: #d9b8a3;
+    }
 
-    <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
-      <div style="color: red;">
-        <ul>
-          <% errors.forEach(function(err) { %>
-            <li><%= err.msg %></li>
-          <% }) %>
-        </ul>
-      </div>
-    <% } %>
+    header {
+      background-color: #d9b8a3;
+      color: white;
+      padding: 25px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
 
-    <form method="POST" action="registered">
-      <p>
-        First name:
-        <input id="first" type="text" name="first"
-               value="<%= (data && data.first) ? data.first : '' %>" />
-      </p>
+    h1 {
+      margin: 0;
+      font-size: 30px;
+    }
 
-      <p>
-        Last name:
-        <input id="last" type="text" name="last"
-               value="<%= (data && data.last) ? data.last : '' %>" />
-      </p>
+    form {
+      margin-top: 30px;
+      padding-left: 20px; /* Keeps spacing minimal + aligned */
+    }
 
-      <p>
-        Email:
-        <input id="email" type="email" name="email"
-               value="<%= (data && data.email) ? data.email : '' %>" />
-      </p>
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
 
-      <p>
-        Username:
-        <input id="username" type="text" name="username"
-               value="<%= (data && data.username) ? data.username : '' %>" />
-      </p>
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      padding: 8px;
+      width: 300px;
+      margin-bottom: 15px;
+      border: 1px solid #caa088;
+      border-radius: 4px;
+    }
 
-      <p>
-        Password:
-        <input id="password" type="password" name="password" />
-      </p>
+    input[type="submit"] {
+      background-color: #d9b8a3;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+</head>
 
-      <input type="submit" value="Register" />
-    </form>
-  </body
+<body>
+  <header>
+    <h1>Bertie’s Bookshop</h1>
+  </header>
+
+  <form method="POST" action="/users/registered">
+    <label>First Name:</label>
+    <input type="text" name="first" required>
+
+    <label>Last Name:</label>
+    <input type="text" name="last" required>
+
+    <label>Email:</label>
+    <input type="email" name="email" required>
+
+    <label>Username:</label>
+    <input type="text" name="username" required>
+
+    <label>Password:</label>
+    <input type="password" name="password" required>
+
+    <input type="submit" value="Register">
+  </form>
+
+</body>
+</html>
