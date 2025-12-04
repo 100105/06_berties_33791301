@@ -118,7 +118,8 @@ router.post('/', function (req, res, next) {
                 </html>
             `);
         }
-
+        
+        // real city    
         var wmsg =
             'It is ' + weather.main.temp +
             ' degrees in ' + weather.name +
