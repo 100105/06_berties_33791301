@@ -96,9 +96,9 @@ router.get("/now", function(req, res, next) {
 });
 
 // chosen city form
-router.post("/", function(req, res, next) {
-
-    let city = req.sanitize(req.body.city);
+// POST /weather — Fetch weather & display nicely
+router.post('/', (req, res, next) => {
+    let city = req.body.city;
     let apiKey = process.env.WEATHER_API_KEY;
     let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
 
@@ -108,15 +108,66 @@ router.post("/", function(req, res, next) {
         } else {
             var weather = JSON.parse(body);
 
-            if (weather.cod != 200) {
-                return res.send("City not found/.");
-            }
+            // This is the required coursework output:
+            var wmsg = 'It is '+ weather.main.temp +
+              ' degrees in '+ weather.name +
+              '! <br> The humidity now is: ' +
+              weather.main.humidity;
 
-            var wmsg = 'It is '+ weather.main.temp + 
-            ' degrees in '+ weather.name +
-            '! <br> The humidity now is: ' +
-            weather.main.humidity;
-            res.send(wmsg);
+            // Styled display
+            res.send(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Weather Result</title>
+                <style>
+                    body {
+                        font-family: "Poppins", Arial, sans-serif;
+                        background-color: #f9f5f2;
+                        margin: 0;
+                        padding: 0;
+                        text-align: center;
+                        color: #4a3f35;
+                    }
+                    header {
+                        background-color: #d9b8a3;
+                        color: white;
+                        padding: 25px;
+                        text-align: center;
+                        letter-spacing: 1px;
+                    }
+                    .container {
+                        margin-top: 40px;
+                        font-size: 22px;
+                        font-weight: 500;
+                    }
+                    a {
+                        display: inline-block;
+                        margin-top: 25px;
+                        padding: 10px 15px;
+                        background-color: #d9b8a3;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 6px;
+                    }
+                </style>
+            </head>
+
+            <body>
+                <header>
+                    <h1>Bertie’s Bookshop</h1>
+                </header>
+
+                <div class="container">
+                    ${wmsg}
+                </div>
+
+                <a href="/weather">Check Another City</a><br>
+                <a href="/">Return to Home</a>
+            </body>
+            </html>
+            `);
         }
     });
 });
