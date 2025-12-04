@@ -13,8 +13,10 @@
       <p><a href="/">Return to Home</a></p>
     </header>
 
-    <form action="/books/search-result" method="GET">      <p>Which book are you looking for?</p>
-      <input id="search-box" type="text" name="keyword">      <input type="submit" value="Search" >
+    <form action="/books/search-result" method="GET">
+      <p>Which book are you looking for?</p>
+      <input id="search-box" type="text" name="keyword" required>
+      <input type="submit" value="Search">
     </form>
   </body>
 </html>
