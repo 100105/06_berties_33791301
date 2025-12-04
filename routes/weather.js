@@ -2,17 +2,76 @@ const express = require("express");
 const router = express.Router();
 const request = require("request");
 
-router.get("/", function(req, res) {
+// GET /weather — Show form to enter city
+router.get('/', (req, res) => {
     res.send(`
-        <html>
-        <body style="font-family: Arial; background:#f9f5f2; color:#4a3f35; text-align:center; margin-top:50px;">
-            <h2>Check the Weather</h2>
-            <form action="/weather" method="POST">
-                <input type="text" name="city" placeholder="Enter city" required>
-                <button type="submit">Get Weather</button>
-            </form>
-        </body>
-        </html>
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Weather</title>
+      <style>
+        body {
+          font-family: "Poppins", Arial, sans-serif;
+          background-color: #f9f5f2;
+          margin: 0;
+          padding: 0;
+          color: #4a3f35;
+          text-align: center;
+        }
+        header {
+          background-color: #d9b8a3;
+          color: white;
+          padding: 25px;
+          text-align: center;
+          letter-spacing: 1px;
+        }
+        h1 {
+          margin: 0;
+          font-size: 30px;
+        }
+        form {
+          margin-top: 30px;
+        }
+        input[type="text"] {
+          padding: 8px;
+          width: 250px;
+          border: 1px solid #caa088;
+          border-radius: 4px;
+        }
+        button {
+          padding: 10px 15px;
+          background-color: #d9b8a3;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          margin-left: 6px;
+        }
+        a {
+          display: inline-block;
+          margin-top: 20px;
+          color: #d9b8a3;
+          text-decoration: none;
+          font-weight: bold;
+        }
+      </style>
+    </head>
+
+    <body>
+      <header>
+        <h1>Bertie’s Bookshop</h1>
+      </header>
+
+      <h2>Check the Weather</h2>
+      <form action="/weather" method="POST">
+        <input type="text" name="city" placeholder="Enter city (e.g. London)" required>
+        <button type="submit">Get Weather</button>
+      </form>
+
+      <a href="/">Return to Home</a>
+    </body>
+    </html>
     `);
 });
 
