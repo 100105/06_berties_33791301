@@ -7,7 +7,7 @@ router.get('/books', function (req, res, next) {
     let sqlquery = "SELECT * FROM books";
     let conditions = [];
     let values = [];
-
+ 
     // search
     if (req.query.search) {
         conditions.push("name LIKE ?");
