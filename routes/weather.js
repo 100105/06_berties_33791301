@@ -105,6 +105,7 @@ router.get('/now', function (req, res, next) {
 });
 
 //designed outcone
+// Weather POST 
 router.post('/', function (req, res, next) {
 
     var city = req.body.city;
@@ -117,39 +118,38 @@ router.post('/', function (req, res, next) {
 
         var weather = JSON.parse(body);
 
-        // fake city
-        if (weather.cod !== 200) {
+        // REQUIRED Coursework error handling
+        if (weather !== undefined && weather.main !== undefined) {
+            var wmsg = 'It is ' + weather.main.temp +
+                ' degrees in ' + weather.name +
+                '! <br> The humidity now is: ' +
+                weather.main.humidity +
+                '% <br> The wind speed is: ' +
+                weather.wind.speed + ' m/s';
+
             return res.send(`
                 <html>
                 <body style="font-family:Poppins;text-align:center;background:#f9f5f2;padding-top:50px;color:#4a3f35;">
-                    <h2>City not found!</h2>
-                    <a style="background:#d9b8a3;color:white;padding:10px 18px;border-radius:6px;text-decoration:none;" href="/weather">search again</a>
-                    <a style="background:#d9b8a3;color:white;padding:10px 18px;border-radius:6px;text-decoration:none;" href="/">back to home</a>
+                    <h2>${wmsg}</h2>
+                    <a style="background:#d9b8a3;color:white;padding:10px 18px;border-radius:6px;text-decoration:none;" href="/weather">Search Again</a>
+                    <br><br>
+                    <a style="background:#d9b8a3;color:white;padding:10px 18px;border-radius:6px;text-decoration:none;" href="/">Return Home</a>
                 </body>
                 </html>
             `);
         }
-
-        // real city    
-        var wmsg =
-            'It is ' + weather.main.temp +
-            'degrees in ' + weather.name +
-            '! <br> The humidity now is: ' +
-            weather.main.humidity +
-            '% <br> The wind speed is: ' +
-            weather.wind.speed + ' m/s';
-
-        
-
-        res.send(`
-            <html>
-            <body style="font-family: Arial, sans-serif; text-align:center; background:#f9f5f2; padding-top:50px; color:#4a3f35; line-height:1.6; font-size:18px;">                <h2>${wmsg}</h2>
-                <a style="background:#d9b8a3;color:white;padding:10px 18px;border-radius:6px;text-decoration:none;" href="/weather">Search Again</a>
-                <br><br>
-                <a style="background:#d9b8a3;color:white;padding:10px 18px;border-radius:6px;text-decoration:none;" href="/">Return Home</a>
-            </body>
-            </html>
-        `);
+        else {
+            return res.send(`
+                <html>
+                <body style="font-family:Poppins;text-align:center;background:#f9f5f2;padding-top:50px;color:#4a3f35;">
+                    <h2>No data found — try a different city</h2>
+                    <a style="background:#d9b8a3;color:white;padding:10px 18px;border-radius:6px;text-decoration:none;" href="/weather">Try Again</a>
+                    <br><br>
+                    <a style="background:#d9b8a3;color:white;padding:10px 18px;border-radius:6px;text-decoration:none;" href="/">Return Home</a>
+                </body>
+                </html>
+            `);
+        }
     });
 });
 
