@@ -1,21 +1,20 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 
-// /api/books
 router.get('/books', function (req, res, next) {
+    const search = req.query.search;
+    const min = req.query.minprice;
+    const max = req.query.maxprice;
 
-    let search = req.query.search; 
-    let min = req.query.minprice;
-    let max = req.query.maxprice;
+    // sql
+    let sqlquery = "SELECT * FROM books";
+    const params = [];
+    const conditions = [];
 
-    let sqlquery;
-    let params = [];
-    let conditions = [];
-
-    //searched something
+    // search somthing
     if (search && search.trim() !== '') {
         conditions.push("name LIKE ?");
-        params.push('%' + search + '%');
+        params.push('%' + search.trim() + '%');
     }
 
     // min price
@@ -30,7 +29,6 @@ router.get('/books', function (req, res, next) {
         params.push(max);
     }
 
-    // if theres condiitions
     if (conditions.length > 0) {
         sqlquery += " WHERE " + conditions.join(" AND ");
     }
@@ -38,7 +36,7 @@ router.get('/books', function (req, res, next) {
     db.query(sqlquery, params, (err, result) => {
         if (err) {
             res.json({ error: err.message });
-            next(err);
+            return next(err);
         } else {
             res.json(result);
         }
