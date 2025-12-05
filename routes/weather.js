@@ -63,6 +63,22 @@ router.get('/', function (req, res) {
     `);
 });
 
+//json
+router.get('/now', function (req, res, next) {
+
+    var apiKey = process.env.WEATHER_API_KEY;
+    var city = 'london';
+    var url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+
+    request(url, function (err, response, body) {
+        if (err) {
+            next(err);
+        } else {
+            res.send(body); // EXACT coursework requirement
+        }
+    });
+});
+
 // Weather POST 
 router.post('/', function (req, res, next) {
 
