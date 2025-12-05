@@ -1,46 +1,52 @@
 const express = require('express');
 const router = express.Router();
 
+// api route
 router.get('/books', function (req, res, next) {
-    const search = req.query.search;
-    const min = req.query.minprice;
-    const max = req.query.maxprice;
 
-    // sql
     let sqlquery = "SELECT * FROM books";
-    const params = [];
-    const conditions = [];
+    let conditions = [];
+    let values = [];
 
-    // search somthing
-    if (search && search.trim() !== '') {
+    // search
+    if (req.query.search) {
         conditions.push("name LIKE ?");
-        params.push('%' + search.trim() + '%');
+        values.push("%" + req.query.search + "%");
     }
 
-    // min price
-    if (min && !isNaN(min)) {
-        conditions.push("price >= ?");
-        params.push(min);
+    // price 
+    if (req.query.minprice && req.query.maxprice) {
+        conditions.push("price >= ? AND price <= ?");
+        values.push(req.query.minprice, req.query.maxprice);
     }
 
-    // max price
-    if (max && !isNaN(max)) {
-        conditions.push("price <= ?");
-        params.push(max);
-    }
-
+    // join conditions
     if (conditions.length > 0) {
         sqlquery += " WHERE " + conditions.join(" AND ");
     }
 
-    db.query(sqlquery, params, (err, result) => {
+    // sort alphaberically
+    if (req.query.sort === "name") {
+        sqlquery += " ORDER BY name ASC";
+    }
+
+    // sort by price
+    else if (req.query.sort === "price") {
+        sqlquery += " ORDER BY price ASC";
+    }
+
+    // newest book to be added goes to top of the list
+    else if (req.query.sort === "date" || req.query.sort === "id") {
+        sqlquery += " ORDER BY id DESC"; 
+    }
+
+    db.query(sqlquery, values, (err, result) => {
         if (err) {
-            res.json({ error: err.message });
-            return next(err);
+            res.json(err);
+            next(err);
         } else {
             res.json(result);
         }
     });
 });
-
 module.exports = router;

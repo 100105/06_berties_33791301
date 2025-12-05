@@ -32,8 +32,7 @@ router.get('/search-result', function (req, res, next) {
         if (result.length === 0) {
             return res.send(`
                 <html>
-                <body style="font-family:Poppins;background:#f9f5f2;text-align:center;color:#4a3f35;">
-                    <h2>No results found for "${keyword}" </h2>
+                <body style="font-family: Arial, sans-serif; text-align:center; background:#f9f5f2; padding-top:50px; color:#4a3f35; line-height:1.6; font-size:18px;">                    <h2>No results found for "${keyword}" </h2>
                     <a href="/books/search" style="background:#d9b8a3;color:white;padding:10px 16px;border-radius:6px;text-decoration:none;">Search again</a>
                     <br><br>
                     <a href="/" style="background:#d9b8a3;color:white;padding:10px 16px;border-radius:6px;text-decoration:none;">Return Home</a>
@@ -52,8 +51,7 @@ router.get('/search-result', function (req, res, next) {
 
         res.send(`
             <html>
-            <body style="font-family:Poppins;background:#f9f5f2;text-align:center;color:#4a3f35;">
-                <h2>Search results for "${keyword}" 🔍</h2>
+            <body style="font-family: Arial, sans-serif; text-align:center; background:#f9f5f2; padding-top:50px; color:#4a3f35; line-height:1.6; font-size:18px;">                <h2>Search results for "${keyword}" 🔍</h2>
                 <table style="margin:auto;border-collapse:collapse;">
                     <tr>
                         <th style="padding:10px;">Book Name</th>
